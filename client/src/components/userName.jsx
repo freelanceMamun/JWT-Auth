@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useFormik } from 'formik';
@@ -25,7 +24,7 @@ const userName = () => {
       <div className="flex justify-center flex-col items-center h-screen">
         <div className={style.glass}>
           <div className="title flex py-10 flex-col items-center">
-            <h1 className="text-5xl font-medium">Hello Again</h1>
+            <h1 className="text-5xl font-medium">Welcome</h1>
             <span className="py-4 text-xl w-2/3 text-center text-gray-500">
               Explore More by connecting with us
             </span>
@@ -46,13 +45,13 @@ const userName = () => {
                 placeholder="Username"
               />
               <button className={style.btn} type="submit">
-                Let's Go
+                Login
               </button>
             </div>
 
             <div className="text-center py-4">
               <span className=" text-gray-500">
-                Not a Member
+                Not a Member{' '}
                 <Link className=" text-red-500" to="/register">
                   Register Now
                 </Link>

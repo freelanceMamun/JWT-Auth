@@ -41,3 +41,44 @@ function usernameVerify(error = {}, values) {
     error.username = toast.error('Invalid Username..!');
   }
 }
+
+// Validate Reset password
+
+export async function resetPasswordValidteion(values) {
+  const error = passwordVerify({}, values);
+
+  if (values.password !== values.confirm_PWd) {
+    error.exist = toast.error('Password Not match...!');
+  }
+  return error;
+}
+
+/// validate register form
+
+export async function registerValidation(values) {
+  const errors = usernameVerify({}, values);
+  passwordVerify(errors, values);
+  emailVerify(errors, values);
+
+  return errors;
+}
+
+// === email varify
+
+function emailVerify(error = {}, values) {
+  if (!values.email) {
+    error.email = toast.error('Email Required...!');
+  } else if (values.email.includes(' ')) {
+    error.email = toast.error('Invalid Email...!');
+  }
+
+  return error;
+}
+
+/// Validate Profile page
+
+export async function ProfileValidation(values) {
+  const erros = emailVerify({}, values);
+
+  return erros;
+}

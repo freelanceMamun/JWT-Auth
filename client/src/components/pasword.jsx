@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useFormik } from 'formik';
@@ -46,7 +45,7 @@ const Pasword = () => {
                 placeholder="password"
               />
               <button className={style.btn} type="submit">
-                Let's Go
+                Send
               </button>
             </div>
 
