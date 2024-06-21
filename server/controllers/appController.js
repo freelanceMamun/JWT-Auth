@@ -142,6 +142,20 @@ const getUser = async (req, res) => {
 
 const updateuser = async (req, res) => {
   try {
+    const Id = req.query.id;
+    console.log(Id);
+    if (Id) {
+      const body = req.body;
+      console.log(body);
+
+      await Users.updateOne({ _id: Id }, body);
+
+      return res.status(201).send({
+        mesg: 'Record Updated',
+      });
+    } else {
+      return res.status(401).send({ error: 'User Not Found...!' });
+    }
   } catch (error) {}
 
   res.json('PUT Updateuser Router');
