@@ -6,6 +6,10 @@ const router = Router();
 
 router.post('/register', controller.register);
 
+
+
+
+
 router.post('/registerMail', (req, res) => {
   res.status(201).json({
     message: 'register Email route',
