@@ -1,14 +1,10 @@
 import { Router } from 'express';
 import * as controller from '../controllers/appController.js';
+
 const router = Router();
 
 // PosT
-
 router.post('/register', controller.register);
-
-
-
-
 
 router.post('/registerMail', (req, res) => {
   res.status(201).json({
@@ -22,7 +18,7 @@ router.post('/authenticate', (req, res) => {
   });
 });
 
-router.post('/login', controller.login);
+router.post('/login', controller.verifyUser, controller.login);
 
 //  GET Method
 

@@ -1,5 +1,22 @@
 import { Users } from '../models/User.model.js';
 import bcrypt from 'bcrypt';
+import JWT from 'jsonwebtoken';
+
+const SecreateKEY =
+  '7vgfPTuueXy+JH4&VzmQyeW8PVF$%DpunZyyRhqpj$AkERjS7srT*Sz564RFVjBJ+#z5a$$xK?c$fkkskfUc@pWz29A3@r6@URJF';
+
+export async function verifyUser(req, res, next) {
+  try {
+    const { username } = req.method == 'GET' ? req.query : req.body;
+
+    // check the user existance
+    let exist = await Users.findOne({ username });
+    if (!exist) return res.status(404).send({ error: "Can't find User!" });
+    next();
+  } catch (error) {
+    return res.status(404).send({ error: 'Authentication Error' });
+  }
+}
 
 /// Register Controller POST
 const register = async (req, res) => {
@@ -72,34 +89,24 @@ const login = async (req, res) => {
       });
     }
 
-
-
     // Successfull login user
 
-   // === Generateuser Loken
+    // === Generateuser Loken
 
-    if(findUser){
-    
+    if (findUser) {
+      const payloadUser = {
+        AWU: findUser.username,
+        UserId: findUser._id,
+      };
+      // GET Token JWT Generate user id
+      let TokenJWT = JWT.sign(payloadUser, SecreateKEY, { expiresIn: '24h' });
 
-
-
+      res.status(200).json({
+        message: 'Login Successfully!',
+        findUser,
+        TokenJWT,
+      });
     }
-
-
-  res.status(200).json({
-    message : 'Login Successfully!',
-    findUser,
-    
-  })
-
-
-
-
-
-
-
-
-
   } catch (error) {
     return res.status(500).json({
       error: 'Login Unauthorized',
