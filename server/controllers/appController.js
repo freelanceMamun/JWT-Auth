@@ -101,7 +101,7 @@ const login = async (req, res) => {
       // GET Token JWT Generate user id
       let TokenJWT = JWT.sign(payloadUser, SecreateKEY, { expiresIn: '24h' });
 
-      res.status(200).json({
+      res.status(200).send({
         message: 'Login Successfully!',
         findUser,
         TokenJWT,
@@ -112,21 +112,38 @@ const login = async (req, res) => {
       error: 'Login Unauthorized',
     });
   }
-
-  res.status(200).json({
-    message: 'Login Successfully..!',
-  });
 };
 
 // Get User Controllers
 
 const getUser = async (req, res) => {
-  res.json('GET User Router');
+  const { username } = req.params;
+
+  // GET User
+
+  try {
+    if (!username) {
+      return res.status(501).send({ error: 'Invalid  Username..!' });
+    }
+    const FindUser = await Users.findOne({ username });
+
+    if (!FindUser) {
+      return res.status(501).send({ error: "Couldn't Find the User...!" });
+    } else {
+      const { password, ...response } = Object.assign({}, FindUser.toJSON());
+      return res.status(201).send({ response });
+    }
+  } catch (error) {
+    return res.status(404).send({ error: 'Cannot Find User Data..!' });
+  }
 };
 
 // PUT Update user
 
 const updateuser = async (req, res) => {
+  try {
+  } catch (error) {}
+
   res.json('PUT Updateuser Router');
 };
 
