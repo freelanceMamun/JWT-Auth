@@ -2,6 +2,8 @@ import { Users } from '../models/User.model.js';
 import bcrypt from 'bcrypt';
 import JWT from 'jsonwebtoken';
 
+import OTPGenerator from 'otp-generator';
+
 const SecreateKEY =
   '7vgfPTuueXy+JH4&VzmQyeW8PVF$%DpunZyyRhqpj$AkERjS7srT*Sz564RFVjBJ+#z5a$$xK?c$fkkskfUc@pWz29A3@r6@URJF';
 
@@ -131,7 +133,7 @@ const getUser = async (req, res) => {
       return res.status(501).send({ error: "Couldn't Find the User...!" });
     } else {
       const { password, ...response } = Object.assign({}, FindUser.toJSON());
-      return res.status(201).send({ response });
+      return res.status(201).send({ response, password });
     }
   } catch (error) {
     return res.status(404).send({ error: 'Cannot Find User Data..!' });
@@ -143,12 +145,13 @@ const getUser = async (req, res) => {
 const updateuser = async (req, res) => {
   try {
     const Id = req.query.id;
-    console.log(Id);
-    if (Id) {
-      const body = req.body;
-      console.log(body);
+    const { UserId } = req.user;
+    console.log('id', UserId);
 
-      await Users.updateOne({ _id: Id }, body);
+    if (UserId) {
+      const body = req.body;
+
+      await Users.updateOne({ _id: UserId }, body);
 
       return res.status(201).send({
         mesg: 'Record Updated',
@@ -156,33 +159,71 @@ const updateuser = async (req, res) => {
     } else {
       return res.status(401).send({ error: 'User Not Found...!' });
     }
-  } catch (error) {}
-
-  res.json('PUT Updateuser Router');
+  } catch (error) {
+    return res.status(401).send({ error });
+  }
 };
 
 /// GET Generate oTP
 
 const generateOTP = async (req, res) => {
-  res.json('GEt generateOTP Router');
+  req.app.locals.OTP = await OTPGenerator.generate(6, {
+    lowerCaseAlphabets: false,
+    upperCaseAlphabets: false,
+    specialChars: false,
+  });
+  res.status(201).send({ code: req.app.locals.OTP });
 };
 
 /// GET Verify OTP
 
 const verfiyOTP = async (req, res) => {
-  res.json('GEt Verify OTP Router');
+  const { code } = req.query;
+  if (parseInt(req.app.locals.OTP) === parseInt(code)) {
+    req.app.locals.OTP = null; // reset the OTP value
+    req.app.locals.resetSession = true; // start session for reset password
+    return res.status(201).send({ msg: 'Verify Successsfully!' });
+  }
+  return res.status(400).send({ error: 'Invalid OTP' });
 };
 
 /// Reset Sesstion
 
 const createResetSession = async (req, res) => {
-  res.json('Create Reset Sesstion');
+  if (req.app.locals.resetSession) {
+    req.app.locals.resetSession = false;
+    return res.status(201).send({ mesg: 'access grantend' });
+  }
+
+  res.status(403).send({ error: 'Session Expired..!' });
 };
 
 /// Reset Password
-const resetPassword = async (req, res) => {
-  res.json('Reset Password');
-};
+async function resetPassword(req, res) {
+  const salt = await bcrypt.genSalt(10);
+
+  try {
+    if (!req.app.locals.resetSession)
+      return res.status(440).send({ error: 'Session expired!' });
+
+    const { username, password } = req.body;
+
+    const hasehPassword = await bcrypt.hash(password, salt);
+
+    const findUser = await Users.findOne({ username });
+
+    if (!findUser) {
+      return res.status(401).send({ error: 'Username not Found..!' });
+    } else {
+      await Users.updateOne({ username }, { password: hasehPassword });
+      res.status(201).json({
+        message: 'Record Updated Sucessfully..!',
+      });
+    }
+  } catch (error) {
+    return res.status(401).send({ error });
+  }
+}
 
 export {
   register,

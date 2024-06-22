@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import * as controller from '../controllers/appController.js';
-
+import Auth, { LocalVariables } from '../middleware/Auth.js';
 const router = Router();
 
 // PosT
@@ -24,7 +24,12 @@ router.post('/login', controller.verifyUser, controller.login);
 
 router.get('/user/:username', controller.getUser);
 
-router.get('/generateOTP', controller.generateOTP);
+router.get(
+  '/generateOTP',
+  controller.verifyUser,
+  LocalVariables,
+  controller.generateOTP
+);
 
 router.get('/verifyOTP', controller.verfiyOTP);
 
@@ -32,7 +37,7 @@ router.get('/createResetSession', controller.createResetSession);
 
 // PuT
 
-router.put('/updateuser', controller.updateuser);
-router.put('/resetPassword', controller.resetPassword);
+router.put('/updateuser', Auth, controller.updateuser);
+router.put('/resetPassword', controller.verifyUser, controller.resetPassword);
 
 export default router;
