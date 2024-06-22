@@ -216,6 +216,7 @@ async function resetPassword(req, res) {
       return res.status(401).send({ error: 'Username not Found..!' });
     } else {
       await Users.updateOne({ username }, { password: hasehPassword });
+      req.app.locals.resetSession = false;
       res.status(201).json({
         message: 'Record Updated Sucessfully..!',
       });
