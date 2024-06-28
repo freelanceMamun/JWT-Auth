@@ -1,16 +1,15 @@
-import { Router } from 'express';
+import { Router, json } from 'express';
 import * as controller from '../controllers/appController.js';
 import Auth, { LocalVariables } from '../middleware/Auth.js';
+
+import { registerMail } from '../controllers/mailer.js';
+
 const router = Router();
 
 // PosT
 router.post('/register', controller.register);
 
-router.post('/registerMail', (req, res) => {
-  res.status(201).json({
-    message: 'register Email route',
-  });
-});
+router.post('/registerMail', registerMail);
 
 router.post('/authenticate', (req, res) => {
   res.status(201).json({
