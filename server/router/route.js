@@ -11,7 +11,7 @@ router.post('/register', controller.register);
 
 router.post('/registerMail', registerMail);
 
-router.post('/authenticate', (req, res) => {
+router.post('/authenticate', controller.verifyUser, (req, res) => {
   res.status(201).json({
     message: 'authenticate',
   });
