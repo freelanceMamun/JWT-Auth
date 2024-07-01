@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+axios.defaults.baseURL = 'http://localhost:5173/';
+
 export async function authentication(username) {
   try {
     return axios.post('/api/authenticate', { username });

@@ -1,11 +1,20 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useFormik } from 'formik';
+
 // varifiy user  fun import
 import { usernameValidate } from '../helper/validate';
 
+import { UseAuthStore } from '../store/store.js';
+
 import style from '../styles/user.module.css';
-const userName = () => {
+
+const UserName = () => {
+  const setUsernName = UseAuthStore((state) => state.setUsername);
+  // const name = UseAuthStore((state) => state.auth.username);
+  const navigate = useNavigate();
+
   const formik = useFormik({
     initialValues: {
       username: '',
@@ -14,9 +23,13 @@ const userName = () => {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      console.log(values);
+      console.log('Submit values', values);
+      setUsernName(values.username);
+      navigate('/password');
     },
   });
+
+  useEffect(() => {}, []);
 
   return (
     <div className=" container mx-auto">
@@ -64,4 +77,4 @@ const userName = () => {
   );
 };
 
-export default userName;
+export default UserName;
